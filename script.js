@@ -1,12 +1,14 @@
 let ultimoOperador = null;
-let n1;
-let n2;
-let ultimoEnPantalla;
+let n1 = '';
+let n2 = '';
+let ultimoDisplay = null;
+let ultimoEnPantalla = '';
 
 const botonNumeros = document.querySelectorAll('[data-number]');
 const botonOperador = document.querySelectorAll('[data-operator]');
 const display = document.getElementById('display');
 const igual = document.getElementById('igual');
+
 
 botonOperador.forEach((boton) => 
     boton.addEventListener('click', () => anexarOperador(boton.textContent))
@@ -17,17 +19,16 @@ botonNumeros.forEach((boton) =>
 )
 
 igual.addEventListener('click', () =>
-    evaluar();
-    operar(n1, n2, operador);
+    evaluar()
 )
-
 
 function anexarNumero(numero){
     if (display.textContent == 0){
         limpiarDisplay();
     }
     display.textContent += numero;
-    ultimoEnPantalla = display.textContent;
+    ultimoEnPantalla += numero;
+    console.log(display.textContent)
 }
 
 function limpiarDisplay(){
@@ -35,31 +36,38 @@ function limpiarDisplay(){
 }
 
 function anexarOperador(operador){
-    evaluar();
-    console.log(n1,' ', n2)
+
     if(ultimoOperador != null){
-        display.textContent = ultimoDisplay;
-        display.textContent += operador;
-        ultimoEnPantalla = '';
+        evaluar(operador)
     } else {
+        n1 = ultimoEnPantalla;
         ultimoDisplay = display.textContent;
         display.textContent += operador;
         ultimoOperador = operador;
         ultimoEnPantalla = '';
+        
+        console.log(n1)
     }
 }
 
-function evaluar (){
-    if (n1 == null) {
-        n1 = ultimoEnPantalla;
-    } else {
+
+function evaluar (operador){
+    if (ultimoEnPantalla == '' && n2 == ''){
+        display.textContent = ultimoDisplay;
+        display.textContent += operador;
+        ultimoOperador = operador;
+    }
+    if(ultimoEnPantalla != ''){
         n2 = ultimoEnPantalla;
+        ultimoEnPantalla = '';
+    }
+    if (ultimoEnPantalla == '' && n2 != ''){
+        display.textContent = (operar(ultimoOperador, n1, n2))
     }
 }
 
 function suma (n1, n2){
-    res = n1 + n2;
-    return res;
+    return n1 + n2;
 }
 
 function resta (n1, n2){
@@ -78,6 +86,8 @@ function div (n1, n2){
 }
 
 function operar (operador, n1, n2){
+    n1 = Number(n1);
+    n2 = Number(n2);
     switch (operador){
         case "+":
             return suma(n1, n2);
